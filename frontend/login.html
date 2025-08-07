@@ -16,15 +16,17 @@
         <li><a href="cart.html">Giỏ hàng</a></li>
       </ul>
     </nav>
-    <div class="auth-buttons">
-      <a href="login.html" class="auth-link">Đăng nhập</a>
-      <a href="register.html" class="auth-link">Đăng ký</a>
-    </div>
+    <div class="auth-buttons" id="auth-section">
+  <!-- Sẽ được xử lý bởi JS -->
+</div>
+<script src="js/auth.js"></script>
+
+
   </div>
 </header>
   <div class="auth-container">
   <h2>Đăng nhập</h2>
-  <form action="/api/login" method="POST">
+  <form id="login-form" action="/api/login" method="POST">
     <label for="email">Email:</label>
     <input type="email" name="email" id="email" required />
 
@@ -38,14 +40,14 @@
   </form>
 </div>
 
+<script>
+  const form = document.getElementById("login-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-  <script>
-    const form = document.getElementById("login-form");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-
+    try {
       const res = await fetch("http://localhost:3000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,9 +55,19 @@
       });
 
       const result = await res.json();
-      alert(result.message || "Đăng nhập thành công!");
-      if (res.ok) window.location.href = "index.html";
-    });
-  </script>
+
+      if (res.ok) {
+        localStorage.setItem("user", JSON.stringify(result.user));
+        alert(result.message || "Đăng nhập thành công!");
+        window.location.href = "index.html";
+      } else {
+        alert(result.message || "Đăng nhập thất bại!");
+      }
+    } catch (err) {
+      alert("Lỗi kết nối tới máy chủ.");
+      console.error(err);
+    }
+  });
+</script>
 </body>
 </html>

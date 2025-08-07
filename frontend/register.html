@@ -24,7 +24,7 @@
 </header>
   <div class="auth-container">
   <h2>Đăng ký</h2>
-  <form action="/api/register" method="POST">
+  <form id="register-form" action="/api/register" method="POST">
     <label for="name">Họ tên:</label>
     <input type="text" name="name" id="name" required />
 
@@ -48,7 +48,6 @@
       e.preventDefault();
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
-
       const res = await fetch("http://localhost:3000/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

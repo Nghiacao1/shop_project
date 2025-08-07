@@ -3,8 +3,8 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Cart = require('../models/CartItem');
 
-router.post('/', async (req, res) => {
-  const cartItems = Cart.getCart();
+router.post('/create-checkout-session', async (req, res) => {
+  const cartItems = req.body.cartItems;
   const line_items = cartItems.map(item => ({
     price_data: {
       currency: 'usd',
@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
     },
     quantity: item.quantity
   }));
-
+  console.log("✅ Đã tạo line_items:", line_items);
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
