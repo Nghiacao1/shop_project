@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkLogin()">
+  <div class="admin-header">
+    <h1>Chào mừng đến Admin</h1>
+    <button onclick="logout()">Đăng xuất</button>
+  </div>
+  <div class="admin-dashboard">
+    <a href="products.html" class="card">🛒 Quản lý sản phẩm</a>
+    <a href="customers.html" class="card">👤 Quản lý khách hàng</a>
+    <a href="orders.html" class="card">📦 Quản lý đơn hàng</a>
+  </div>
+
+  <script>
+    function checkLogin() {
+      if (localStorage.getItem('loggedIn') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

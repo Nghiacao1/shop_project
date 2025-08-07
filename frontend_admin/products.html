@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý sản phẩm</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, button { margin: 5px; }
+    .product { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Quản lý sản phẩm</h1>
+
+  <h2>Thêm sản phẩm mới</h2>
+  <input type="text" id="name" placeholder="Tên sản phẩm">
+  <input type="number" id="price" placeholder="Giá sản phẩm">
+  <button onclick="addProduct()">Thêm</button>
+
+  <h2>Danh sách sản phẩm</h2>
+  <div id="products"></div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/products';
+
+    function loadProducts() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          const productsDiv = document.getElementById('products');
+          productsDiv.innerHTML = '';
+          data.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'product';
+            div.innerHTML = `
+              <strong>${p.name}</strong> - $${p.price}
+              <button onclick='deleteProduct(${p.id})'>Xoá</button>
+            `;
+            productsDiv.appendChild(div);
+          });
+        });
+    }
+
+    function addProduct() {
+      const name = document.getElementById('name').value;
+      const price = document.getElementById('price').value;
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, price })
+      }).then(() => {
+        loadProducts();
+        document.getElementById('name').value = '';
+        document.getElementById('price').value = '';
+      });
+    }
+
+    function deleteProduct(id) {
+      fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+      }).then(() => loadProducts());
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>

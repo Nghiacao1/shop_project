@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đăng nhập Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <h2>Đăng nhập Admin</h2>
+    <input type="text" id="username" placeholder="Tên đăng nhập">
+    <input type="password" id="password" placeholder="Mật khẩu">
+    <button onclick="login()">Đăng nhập</button>
+    <p id="error" class="error-text"></p>
+  </div>
+
+  <script>
+    function login() {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      if (u === 'admin' && p === '123456') {
+        localStorage.setItem('loggedIn', 'true');
+        window.location.href = 'dashboard.html';
+      } else {
+        document.getElementById('error').textContent = 'Sai tài khoản hoặc mật khẩu!';
+      }
+    }
+  </script>
+</body>
+</html>

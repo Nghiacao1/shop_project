@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đăng nhập</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="main-header">
+  <div class="container header-container">
+    <h1 class="logo">🛍️ Cửa hàng Online</h1>
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="#">Sản phẩm</a></li>
+        <li><a href="cart.html">Giỏ hàng</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <a href="login.html" class="auth-link">Đăng nhập</a>
+      <a href="register.html" class="auth-link">Đăng ký</a>
+    </div>
+  </div>
+</header>
+  <div class="auth-container">
+  <h2>Đăng nhập</h2>
+  <form action="/api/login" method="POST">
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required />
+
+    <label for="password">Mật khẩu:</label>
+    <input type="password" name="password" id="password" required />
+
+    <button type="submit">Đăng nhập</button>
+    <div class="switch-link">
+      <p>Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a></p>
+    </div>
+  </form>
+</div>
+
+
+  <script>
+    const form = document.getElementById("login-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      const res = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+      alert(result.message || "Đăng nhập thành công!");
+      if (res.ok) window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
