@@ -1,0 +1,93 @@
+<h2 class="section-title">Sản phẩm trong giỏ hàng</h2>
+
+<div class="cart-section">
+  <div id="cart-items" class="cart-items"></div>
+  <div class="cart-summary">
+    <h3 id="total-price"></h3>
+    <button onclick="checkout()">Thanh toán</button>
+  </div>
+</div>
+
+<script>
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cartItemsContainer = document.getElementById('cart-items');
+  const totalPriceEl = document.getElementById('total-price');
+
+  function renderCart() {
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = '<p>Giỏ hàng trống.</p>';
+      totalPriceEl.innerText = '';
+      return;
+    }
+
+    cart.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <div class="cart-item-info">
+          <h3>${item.name} : </h3>
+          <strong style="margin-left:5px">${item.price.toLocaleString()} $</strong>
+          <button onclick="removeItem('${item.id}')">Xóa khỏi giỏ</button>
+        </div>
+      `;
+      cartItemsContainer.appendChild(div);
+      total += Number(item.price);
+    });
+
+    totalPriceEl.innerText = `Tổng cộng: ${total.toLocaleString()} $`;
+  }
+
+  function removeItem(id) {
+    const index = cart.findIndex(item => item.id === id);
+    if (index > -1) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+  }
+
+  async function checkout() {
+    if (cart.length === 0) {
+      alert('Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.');
+      return;
+    }
+
+    const pureCart = cart.map(item => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity || 1,
+      image: item.image
+    }));
+
+    console.log('Cart hiện tại:', pureCart);
+
+    try {
+      const response = await fetch('http://localhost:3000/api/checkout/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ cartItems: pureCart })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Server trả về lỗi:', data);
+        alert('Không thể khởi tạo thanh toán.');
+      }
+    } catch (error) {
+      console.error('Lỗi khi thanh toán:', error);
+      alert('Có lỗi xảy ra trong quá trình thanh toán.');
+    }
+  }
+
+  renderCart();
+</script>

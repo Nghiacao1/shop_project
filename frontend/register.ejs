@@ -1,0 +1,38 @@
+
+  <div class="auth-container">
+  <h2>Đăng ký</h2>
+  <form id="register-form" action="/api/register" method="POST">
+    <label for="name">Họ tên:</label>
+    <input type="text" name="name" id="name" required />
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required />
+
+    <label for="password">Mật khẩu:</label>
+    <input type="password" name="password" id="password" required />
+
+    <button type="submit">Đăng ký</button>
+    <div class="switch-link">
+      <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+    </div>
+  </form>
+</div>
+
+
+  <script>
+    const form = document.getElementById("register-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      const res = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+      alert(result.message || "Đăng ký thành công!");
+      if (res.ok) window.location.href = "login.html";
+    });
+  </script>

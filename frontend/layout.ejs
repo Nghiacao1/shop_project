@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🛍️ Cửa hàng Online</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="main-header">
+  <div class="container header-container">
+    <h1 class="logo">🛍️ Cửa hàng Online</h1>
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li><a href="index">Trang chủ</a></li>
+        <li><a href="#">Sản phẩm</a></li>
+      </ul>
+    </nav>
+    <form id="searchForm" class="search-form">
+      <input type="text" name="keyword" placeholder="Tìm sản phẩm..." required />
+    </form>
+    <div class="auth-cart">
+      <div class="auth-buttons" id="auth-section"><!-- JS render user --></div>
+      <a href="cart" class="cart-icon">🛒</a>
+    </div>
+    <script src="auth.js"></script>
+  </div>
+</header>
+
+<main class="container main-layout">
+  <aside class="sidebar">
+    <h3>Danh mục sản phẩm</h3>
+    <ul>
+      <li><a href="#" data-category="">Tất cả sản phẩm</a></li>
+      <li><a href="#" data-category="electronics">Điện tử</a></li>
+      <li><a href="#" data-category="fashion">Thời trang</a></li>
+      <li><a href="#" data-category="books">Sách</a></li>
+    </ul>
+  </aside>
+
+  <%- body %>
+</main>
+
+<footer class="main-footer">
+  <p>&copy; 2025 Cửa hàng Online. All rights reserved.</p>
+</footer>
+<script>
+  // Lấy URL tham số, ví dụ ?page=home hoặc ?page=products
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get('page') || 'index'; // default là home
+
+  async function loadPageContent(page) {
+    try {
+      const res = await fetch(page + '.html');
+      if (!res.ok) throw new Error('Không tải được trang con');
+      const html = await res.text();
+      document.getElementById('main-content').innerHTML = html;
+    } catch (error) {
+      document.getElementById('main-content').innerHTML = '<p>Không tải được nội dung trang.</p>';
+    }
+  }
+
+  loadPageContent(page);
+</script>
+</body>
+</html>

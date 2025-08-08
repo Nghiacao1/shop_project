@@ -5,3 +5,4 @@ exports.getProducts = (req, res) => {
     res.json(results);
   });
 };
+

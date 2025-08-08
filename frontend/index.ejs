@@ -1,0 +1,121 @@
+<!-- Cột phải: Sản phẩm -->
+  <div class="product-section">
+    <h2 class="section-title">Sản phẩm</h2>
+
+    <!-- Bộ lọc -->
+    <div class="product-filter">
+      <select id="categoryFilter">
+        <option value="">Tất cả danh mục</option>
+        <option value="electronics">Điện tử</option>
+        <option value="fashion">Thời trang</option>
+        <option value="books">Sách</option>
+      </select>
+
+      <select id="priceFilter">
+        <option value="">Tất cả giá</option>
+        <option value="0-100">Dưới 100k</option>
+        <option value="100-500">100k - 500k</option>
+        <option value="500-1000">500k - 1 triệu</option>
+      </select>
+
+      <button id="applyFilter">Lọc</button>
+    </div>
+
+    <!-- Lưới sản phẩm -->
+    <div class="product-grid" id="product-list">
+      <!-- JS render sản phẩm -->
+    </div>
+  </div>
+  </main>
+
+  <footer class="main-footer">
+    <p>&copy; 2025 Cửa hàng Online. All rights reserved.</p>
+  </footer>
+
+  <script>
+async function fetchProducts(url) {
+  const res = await fetch(url);
+  return await res.json();
+}
+
+function renderProducts(products) {
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
+
+  if (!products.length) {
+    container.innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
+    return;
+  }
+
+  products.forEach(product => {
+    const div = document.createElement("div");
+    div.className = "product-card";
+    div.innerHTML = `
+      <img src="${product.image}" alt="${product.name}" />
+      <h3>${product.name}</h3>
+      <p>${product.description}</p>
+      <strong>${product.price.toLocaleString()} $</strong>
+      <button>Thêm vào giỏ</button>
+    `;
+    div.querySelector("button").addEventListener("click", () => {
+      addToCart(product);
+    });
+    container.appendChild(div);
+  });
+}
+
+function addToCart(product) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const exists = cart.find(item => item.id === product.id);
+  if (!exists) {
+    cart.push(product);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert("Đã thêm vào giỏ hàng!");
+  } else {
+    alert("Sản phẩm đã có trong giỏ.");
+  }
+}
+
+// Khi load trang → hiển thị toàn bộ sản phẩm
+document.addEventListener("DOMContentLoaded", async () => {
+  const products = await fetchProducts("/products");
+  renderProducts(products);
+});
+
+// Khi tìm kiếm
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const keyword = this.keyword.value.trim();
+  if (!keyword) return;
+
+  fetch(`/products/search?keyword=${encodeURIComponent(keyword)}`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('product-list');
+      container.innerHTML = "";
+      (data.results || data).forEach(p => {
+        container.innerHTML += `
+          <div>
+            <h3>${p.name}</h3>
+            <p>${p.price} $</p>
+          </div>
+        `;
+      });
+    })
+    .catch(err => console.error(err));
+});
+document.querySelectorAll(".sidebar a").forEach(link => {
+  link.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const category = e.target.getAttribute("data-category");
+
+    let url = "/products";
+    if (category) {
+      url = `/products?category=${encodeURIComponent(category)}`;
+    }
+
+    const products = await fetchProducts(url);
+    renderProducts(products);
+  });
+});
+</script>
