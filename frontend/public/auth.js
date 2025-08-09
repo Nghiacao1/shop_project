@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   } else {
     authSection.innerHTML = `
-      <a href="login" class="auth-link">Đăng nhập</a>
-      <a href="register" class="auth-link">Đăng ký</a>
+      <a href="login" class="auth-link">Login</a>
+      <a href="register" class="auth-link">Register</a>
     `;
   }
 });

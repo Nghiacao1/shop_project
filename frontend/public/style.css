@@ -201,7 +201,7 @@ body {
 
 .auth-buttons {
   display: flex;
-  gap: 10px;
+  gap: -10px;
 }
 
 .auth-link {
@@ -209,7 +209,7 @@ body {
   text-decoration: none;
   font-weight: bold;
   padding: 8px 16px;
-  border: 2px solid white;
+  /* border: 2px solid white; */
   border-radius: 4px;
   transition: background 0.3s, color 0.3s;
 }
@@ -326,6 +326,7 @@ body {
   flex: 4;
   display: flex;
   justify-content: flex-start; /* căn trái */
+  margin-right: 10px;
 }
 
 .search-form input {
