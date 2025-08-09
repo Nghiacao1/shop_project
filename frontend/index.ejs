@@ -41,7 +41,7 @@ function renderProducts(products) {
     container.innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
     return;
   }
-
+  console.log(products);
   products.forEach(product => {
     const div = document.createElement("div");
     div.className = "product-card";
@@ -73,7 +73,7 @@ function addToCart(product) {
 
 // Khi load trang → hiển thị toàn bộ sản phẩm
 document.addEventListener("DOMContentLoaded", async () => {
-  const products = await fetchProducts("/products");
+  const products = await fetchProducts("/products_show");
   renderProducts(products);
 });
 

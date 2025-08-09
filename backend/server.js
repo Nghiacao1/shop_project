@@ -32,21 +32,27 @@ app.use(expressLayouts);
 app.set('layout', 'layout'); // file layout.ejs trong thư mục views
 // Set EJS view engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../frontend')); // thư mục chứa file *.ejs
-
+app.set('views', [
+    path.join(__dirname, '../frontend'),         // views cho user
+    path.join(__dirname, '../frontend_admin')    // views cho admin
+]);
 // Serve static files cho frontend (css, js, img, ...)
 app.use(express.static(path.join(__dirname, '../frontend/public')));
+app.use(express.static(path.join(__dirname, '../frontend_admin/public')));
+// Route riêng cho admin login 
 
-// Serve static files cho admin dashboard (css, js, img,...)
-app.use('/admin', express.static(path.join(__dirname, '../frontend_admin')));
-
-// Route riêng cho admin login (file html tĩnh)
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend_admin/login_admin.html'));
+  res.render('login_admin', {layout: false});
+});
+app.get('/dashboard', (req, res) => {
+  res.render('dashboard',{layout: false});
+});
+app.get('/products', (req, res) => {
+  res.render('products',{layout: false,});
 });
 
 // API: Lấy danh sách sản phẩm
-app.get('/products', (req, res) => {
+app.get('/products_show', (req, res) => {
   db.query('SELECT * FROM products', (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json(results);
@@ -54,7 +60,7 @@ app.get('/products', (req, res) => {
 });
 
 // API: Thêm sản phẩm
-app.post('/products', (req, res) => {
+app.post('/products_add', (req, res) => {
   const { name, price } = req.body;
   db.query('INSERT INTO products (name, price) VALUES (?, ?)', [name, price], (err, result) => {
     if (err) return res.status(500).json({ error: err });
@@ -63,7 +69,7 @@ app.post('/products', (req, res) => {
 });
 
 // API: Xoá sản phẩm
-app.delete('/products/:id', (req, res) => {
+app.delete('/products_del/:id', (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM products WHERE id = ?', [id], (err, result) => {
     if (err) return res.status(500).json({ error: err });
@@ -85,7 +91,7 @@ app.get('/register', (req, res) => {
 app.get('*splat', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'API route not found' });
-  }
+  } 
   // Nếu không phải api hay admin thì trả về trang index.ejs
   res.render('index'); // mặc định tìm file index.ejs trong folder views
 });
